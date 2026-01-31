@@ -1,0 +1,27 @@
+PROCHAINES ÉTAPES POUR GITHUB
+================================
+
+✅ FAIT LOCALEMENT :
+- Repository Git initialisé
+- Tous les fichiers commités
+
+📋 À FAIRE SUR GITHUB:
+
+1. Allez sur https://github.com/new
+2. Créez un repository nommé "Elies-Project"
+3. Ne cochez PAS "Initialize this repository"
+4. Cliquez "Create repository"
+
+5. Puis exécutez DANS LE TERMINAL :
+
+   & "C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/VOTRE_USERNAME/Elies-Project.git
+   & "C:\Program Files\Git\bin\git.exe" branch -M main
+   & "C:\Program Files\Git\bin\git.exe" push -u origin main
+
+6. Lors du push, on vous demandera votre authentification GitHub
+   - Utilisez votre nom d'utilisateur et votre token (pas votre mot de passe)
+
+Voilà ! Votre projet sera sur GitHub !
+
+Pour un accès plus facile à Git, vous pouvez aussi ajouter Git au PATH
+ou utiliser Git Bash directement.
