@@ -4,11 +4,15 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'EB Garamond', serif;
     font-weight: 300;
     line-height: 1.6;
-    color: #333;
+    color: #F2F1ED;
     background-color: #0E0E0E;
     background-image: url('INDEX/Generated Image January 31, 2026 - 8_54PM.jpeg');
     background-size: cover;
@@ -16,6 +20,8 @@ body {
     background-attachment: fixed;
     background-repeat: no-repeat;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -26,12 +32,14 @@ body {
 
 header {
     background: rgba(230, 215, 195, 0.6);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 0.4rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
     border-bottom: 1px solid rgba(201, 162, 77, 0.3);
+    will-change: transform;
 }
 
 nav {
@@ -51,13 +59,15 @@ nav {
     color: #333;
     font-weight: 300;
     text-transform: uppercase;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
     font-size: 0.9rem;
     letter-spacing: 1px;
+    padding: 0.5rem;
 }
 
-.nav-link:hover {
-    color: #FFD700;
+.nav-link:hover,
+.nav-link:focus {
+    color: #C9A24D;
 }
 
 .logo {
@@ -91,6 +101,7 @@ nav {
     height: 100%;
     object-fit: cover;
     display: block;
+    will-change: transform;
 }
 
 .boat-hero::after {
@@ -102,6 +113,7 @@ nav {
     height: 100%;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
     z-index: 1;
+    pointer-events: none;
 }
 
 .boat-title {
@@ -113,7 +125,7 @@ nav {
 }
 
 .boat-title h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-family: 'Cormorant Garamond', serif;
     font-weight: 400;
     letter-spacing: 2px;
@@ -130,20 +142,20 @@ nav {
 }
 
 .boat-section h2 {
-    font-size: 2.2rem;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
     font-family: 'Cormorant Garamond', serif;
     font-weight: 400;
     letter-spacing: 1px;
     color: #A67C52;
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid #FFD700;
+    border-bottom: 2px solid #C9A24D;
     padding-bottom: 1rem;
 }
 
 .boat-section p {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2vw, 1.1rem);
     line-height: 1.8;
-    color: #666;
+    color: #B8B8B8;
     margin-bottom: 1rem;
 }
 
@@ -156,14 +168,21 @@ nav {
 
 .gallery-item {
     overflow: hidden;
-    border: 1px solid #eee;
+    border: 1px solid #2A2A2A;
+    transition: border-color 0.3s ease;
+}
+
+.gallery-item:hover,
+.gallery-item:focus {
+    border-color: #C9A24D;
 }
 
 .gallery-item img {
     width: 100%;
     height: 250px;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
+    will-change: transform;
 }
 
 .gallery-item:hover img {
@@ -186,8 +205,8 @@ nav {
 }
 
 .spec-card:hover {
-    border-top-color: #FFD700;
-    box-shadow: 0 4px 15px rgba(65, 105, 225, 0.12);
+    border-top-color: #A67C52;
+    box-shadow: 0 4px 15px rgba(201, 162, 77, 0.2);
 }
 
 .spec-card h3 {
@@ -199,7 +218,7 @@ nav {
 }
 
 .spec-card p {
-    color: #666;
+    color: #333;
     font-weight: 300;
 }
 
@@ -207,46 +226,152 @@ nav {
     display: inline-block;
     margin-bottom: 2rem;
     text-decoration: none;
-    color: #333;
+    color: #F2F1ED;
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-bottom: 1px solid #FFD700;
-    transition: color 0.3s;
+    border-bottom: 1px solid #C9A24D;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
 }
 
-.back-link:hover {
-    color: #FFD700;
+.back-link:hover,
+.back-link:focus {
+    color: #C9A24D;
 }
 
 footer {
-    background: #333;
-    color: white;
+    background: #1A1A1A;
+    color: #F2F1ED;
     text-align: center;
     padding: 2rem 0;
     margin-top: 4rem;
     font-weight: 300;
 }
 
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .boat-hero {
+        height: 60vh;
+    }
+    
+    .boat-content {
+        padding: 3rem 0;
+    }
+    
+    .boat-section {
+        margin-bottom: 3rem;
+    }
+}
+
 @media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
+    }
+    
+    header {
+        padding: 0.5rem 0;
+    }
+    
     nav {
-        flex-direction: column;
+        min-height: 45px;
     }
-
-    .nav-left,
-    .nav-right {
-        flex: none;
+    
+    .nav-link {
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
     }
-
+    
+    .logo img {
+        height: 25px;
+    }
+    
     .boat-hero {
         height: 50vh;
     }
-
-    .boat-title h1 {
-        font-size: 2.5rem;
+    
+    .boat-title {
+        bottom: 1.5rem;
+        left: 1.5rem;
     }
+    
+    .boat-content {
+        padding: 2rem 0;
+    }
+    
+    .boat-section {
+        margin-bottom: 2.5rem;
+    }
+    
+    .boat-gallery {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .gallery-item img {
+        height: 200px;
+    }
+    
+    .specs-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .spec-card {
+        padding: 1.5rem;
+    }
+    
+    footer {
+        margin-top: 2rem;
+        padding: 1.5rem 0;
+    }
+}
 
-    .boat-section h2 {
-        font-size: 1.8rem;
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .nav-link {
+        font-size: 0.7rem;
+    }
+    
+    .logo img {
+        height: 22px;
+    }
+    
+    .boat-hero {
+        height: 40vh;
+    }
+    
+    .boat-title {
+        bottom: 1rem;
+        left: 1rem;
+    }
+    
+    .boat-gallery {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .gallery-item img {
+        height: 180px;
+    }
+    
+    .spec-card {
+        padding: 1rem;
+    }
+    
+    .back-link {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    footer {
+        font-size: 0.9rem;
     }
 }

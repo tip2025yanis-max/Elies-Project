@@ -4,12 +4,18 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'EB Garamond', serif;
     font-weight: 300;
     line-height: 1.6;
     color: #333;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -20,12 +26,14 @@ body {
 
 header {
     background: rgba(230, 215, 195, 0.6);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 0.4rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
     border-bottom: 1px solid rgba(201, 162, 77, 0.3);
+    will-change: transform;
 }
 
 nav {
@@ -45,11 +53,15 @@ nav {
     color: #333;
     font-weight: 300;
     text-transform: uppercase;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    padding: 0.5rem;
 }
 
-.nav-link:hover {
-    color: #FFD700;
+.nav-link:hover,
+.nav-link:focus {
+    color: #C9A24D;
 }
 
 .logo {
@@ -87,6 +99,7 @@ nav {
     height: 100%;
     z-index: -1;
     object-fit: cover;
+    will-change: transform;
 }
 
 .hero-text {
@@ -96,12 +109,13 @@ nav {
     transform: translate(-50%, -50%);
     z-index: 1;
     text-align: center;
-    width: 100%;
+    width: 90%;
+    max-width: 1000px;
 }
 
 .hero-text h1 {
     color: #F5F5DC;
-    font-size: 6rem;
+    font-size: clamp(2.5rem, 8vw, 6rem);
     font-weight: 500;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     text-transform: uppercase;
@@ -113,7 +127,7 @@ nav {
 
 .hero-text h2 {
     color: white;
-    font-size: 4rem;
+    font-size: clamp(2rem, 6vw, 4rem);
     font-weight: 700;
     font-family: 'Cormorant Garamond', serif;
     text-transform: uppercase;
@@ -126,14 +140,14 @@ nav {
 .hero-divider {
     width: 100px;
     height: 2px;
-    background-color: #FFD700;
+    background-color: #C9A24D;
     margin: 0.75rem auto;
     box-shadow: 3px 3px 15px rgba(0, 0, 0, 1), 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
 .hero-text p {
     color: white;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 4vw, 3rem);
     font-weight: 600;
     font-family: 'Cormorant Garamond', serif;
     text-transform: uppercase;
@@ -146,7 +160,7 @@ nav {
 
 .hero-link {
     color: white;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 4vw, 3rem);
     font-weight: 600;
     font-family: 'Cormorant Garamond', serif;
     text-transform: uppercase;
@@ -156,19 +170,20 @@ nav {
     padding: 0.2em 0.5em;
     line-height: 1.4;
     margin-top: 1rem;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
     cursor: pointer;
 }
 
-.hero-link:hover {
-    color: #FFD700;
+.hero-link:hover,
+.hero-link:focus {
+    color: #C9A24D;
     transform: scale(1.05);
-    text-shadow: 3px 3px 15px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+    text-shadow: 3px 3px 15px rgba(201, 162, 77, 0.5), 0 0 20px rgba(201, 162, 77, 0.3);
 }
 
 .hero-logo {
     position: absolute;
-    top: 20%;
+    top: 15%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -181,13 +196,13 @@ nav {
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero p {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 2vw, 1.3rem);
     margin-bottom: 2rem;
     opacity: 0.95;
 }
@@ -196,11 +211,11 @@ nav {
     display: inline-block;
     padding: 1rem 2rem;
     background: white;
-    color: #667eea;
+    color: #C9A24D;
     text-decoration: none;
     border-radius: 50px;
     font-weight: bold;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn:hover {
@@ -217,7 +232,7 @@ nav {
 
 .features {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
     margin-top: 3rem;
 }
@@ -227,7 +242,7 @@ nav {
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
@@ -236,45 +251,125 @@ nav {
 }
 
 .feature-card h3 {
-    color: #667eea;
+    color: #C9A24D;
     margin-bottom: 1rem;
     font-size: 1.5rem;
 }
 
 .about-title {
     text-align: center;
-    color: #667eea;
-    font-size: 2.5rem;
+    color: #C9A24D;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
     margin-bottom: 2rem;
 }
 
 .about-text {
     text-align: center;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 2vw, 1.2rem);
     max-width: 800px;
     margin: 0 auto;
     color: #666;
 }
 
 footer {
-    background: #333;
-    color: white;
+    background: #1A1A1A;
+    color: #F2F1ED;
     text-align: center;
     padding: 2rem 0;
     margin-top: 2rem;
 }
 
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .hero-logo {
+        top: 10%;
+    }
+    
+    .hero-logo img {
+        max-width: 120px;
+    }
+}
+
 @media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        gap: 1rem;
+    header {
+        padding: 0.5rem 0;
     }
-
-    .hero h1 {
-        font-size: 2.5rem;
+    
+    nav {
+        min-height: 45px;
     }
+    
+    .nav-link {
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .logo img {
+        height: 25px;
+    }
+    
+    .hero {
+        height: 100svh;
+    }
+    
+    .hero-divider {
+        width: 60px;
+    }
+    
+    .hero-logo {
+        top: 8%;
+    }
+    
+    .hero-logo img {
+        max-width: 80px;
+    }
+    
+    .content {
+        padding: 2rem 0;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+}
 
-    .hero p {
-        font-size: 1.1rem;
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .nav-link {
+        font-size: 0.7rem;
+    }
+    
+    .logo img {
+        height: 22px;
+    }
+    
+    .hero-text {
+        width: 95%;
+    }
+    
+    .hero-link {
+        padding: 0.3em 0.3em;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    footer {
+        padding: 1.5rem 0;
+        font-size: 0.9rem;
     }
 }
