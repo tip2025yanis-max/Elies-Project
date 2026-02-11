@@ -3,43 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Élies Project</title>
+    <title>Accueil - ECP (Elysée cruise paris)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <header>
+    <!-- Animation de chargement -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-spinner">
+                <img src="INDEX/mocan1.png" alt="Logo Élies" class="loader-logo">
+            </div>
+            <div class="loader-text">ECP (Elysée cruise paris)</div>
+        </div>
+    </div>
+
+    <header class="site-header">
         <div class="container">
-            <nav>
-                <div class="nav-left">
-                    <a href="bateaux.html" class="nav-link">Nos bateaux</a>
-                </div>
-                <div class="logo">
-                    <img src="INDEX/logo.png" alt="Logo">
-                </div>
-                <div class="nav-right">
-                    <a href="contact.html" class="nav-link">Contact</a>
+            <nav class="navbar">
+                <a href="index.html" class="nav-brand">
+                    <img src="INDEX/mocan2.png" alt="Logo ECP">
+                </a>
+                <div class="nav-actions">
+                    <div class="nav-links">
+                        <a href="index.html" class="nav-link">Accueil</a>
+                        <a href="bateaux.html" class="nav-link">Nos bateaux</a>
+                        <a href="bateaux.html#bateau-mouche" class="nav-link">Bateau-mouche</a>
+                        <a href="bateaux.html#prive" class="nav-link">Prive</a>
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </div>
+                    <a href="contact.html" class="nav-cta">Reserver</a>
                 </div>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="hero">
+        <section class="hero wave-bottom section-fade">
             <video autoplay muted loop playsinline>
                 <source src="INDEX/index.mp4" type="video/mp4">
             </video>
-            <div class="hero-text">
-                <h2>Paris</h2>
-                <div class="hero-divider"></div>
-                <a href="bateaux.html" class="hero-link">découvrez notre gammes</a>
+            <a href="bateaux.html" class="hero-link-simple" data-reveal>Vivez l'experience.</a>
+        </section>
+
+        <!-- Section Bateaux -->
+        <section class="boats-preview wave-bottom section-fade" data-reveal>
+            <div class="container">
+                <h2>Notre Collection</h2>
+                <p class="section-subtitle">Découvrez nos bateaux d'exception</p>
+                <div id="boats-preview" class="boats-grid"></div>
+                <a href="bateaux.html" class="view-all-btn">Voir tous nos bateaux →</a>
             </div>
         </section>
 
-        
+        <!-- Section Contact -->
+        <section class="contact-preview section-fade" data-reveal>
+            <div class="container">
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h2>Prêt à naviguer ?</h2>
+                        <p>Contactez-nous pour réserver votre expérience sur la Seine</p>
+                        <ul class="contact-quick-info">
+                            <li>📧 contact@ecp-paris.fr</li>
+                            <li>📞 +33 1 23 45 67 89</li>
+                            <li>📍 Port de Paris, France</li>
+                        </ul>
+                    </div>
+                    <a href="contact.html" class="contact-btn">Nous contacter</a>
+                </div>
+            </div>
+        </section>
     </main>
 
+    <script>
+        // Animation de chargement
+        const startTime = Date.now();
+        const minLoadingTime = 1100; // Durée minimale de l'animation en ms
+        
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+            
+            setTimeout(function() {
+                loader.style.opacity = '0';
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                }, 800);
+            }, remainingTime);
+        });
+
+        // Catalogue des bateaux (version preview - 3 bateaux seulement)
+        const boatsPreview = [
+            {
+                name: "Bateau Ivre",
+                series: "Collection Prestige",
+                length: "15.2 m",
+                cabins: 3,
+                image: "Bateau ivress/IVREX.jpg",
+                link: "bateau-ivre.html"
+            },
+            {
+                name: "Chivas",
+                series: "Sport Luxury",
+                length: "13.8 m",
+                cabins: 2,
+                image: "Chivas/chivasx.avif",
+                link: "chivas.html"
+            },
+            {
+                name: "Montebello",
+                series: "Exclusive",
+                length: "16.0 m",
+                cabins: 4,
+                image: "Montebello/montebelloX.jpg",
+                link: "montebello.html"
+            }
+        ];
+
+        // Génération des aperçus de bateaux
+        function renderBoatsPreview() {
+            const boatsContainer = document.getElementById('boats-preview');
+            
+            boatsPreview.forEach(boat => {
+                const boatCard = document.createElement('a');
+                boatCard.href = boat.link;
+                boatCard.className = 'boat-card';
+                boatCard.setAttribute('data-reveal', '');
+                
+                boatCard.innerHTML = `
+                    <div class="boat-card-wrapper">
+                        <img src="${boat.image}" alt="${boat.name}" class="boat-image">
+                        <div class="boat-overlay">
+                            <div class="boat-info">
+                                <h3>${boat.name}</h3>
+                                <div class="boat-specs">
+                                    <span class="boat-series">${boat.series}</span>
+                                    <span class="boat-spec">📏 ${boat.length}</span>
+                                    <span class="boat-spec">🛏️ ${boat.cabins} cabine${boat.cabins > 1 ? 's' : ''}</span>
+                                </div>
+                                <span class="boat-cta">Voir le bateau →</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                boatsContainer.appendChild(boatCard);
+            });
+        }
+
+        // Génération des bateaux au chargement de la page
+        renderBoatsPreview();
+    </script>
+    <script src="site.js"></script>
 </body>
 </html>

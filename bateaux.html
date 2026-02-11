@@ -3,102 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bateaux - Élies Project</title>
+    <title>Bateaux - ECP (Elysée cruise paris)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="bateaux.css">
 </head>
 <body>
-    <header>
+    <header class="site-header">
         <div class="container">
-            <nav>
-                <div class="nav-left">
-                    <a href="index.html" class="nav-link">Accueil</a>
-                </div>
-                <div class="logo">
-                    <img src="INDEX/logo.png" alt="Logo">
-                </div>
-                <div class="nav-right">
-                    <a href="contact.html" class="nav-link">Contact</a>
+            <nav class="navbar">
+                <a href="index.html" class="nav-brand">
+                    <img src="INDEX/mocan2.png" alt="Logo ECP">
+                </a>
+                <div class="nav-actions">
+                    <div class="nav-links">
+                        <a href="index.html" class="nav-link">Accueil</a>
+                        <a href="bateaux.html" class="nav-link">Nos bateaux</a>
+                        <a href="bateaux.html#bateau-mouche" class="nav-link">Bateau-mouche</a>
+                        <a href="bateaux.html#prive" class="nav-link">Prive</a>
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </div>
+                    <a href="contact.html" class="nav-cta">Reserver</a>
                 </div>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="page-header">
+        <section class="page-header wave-bottom section-fade" id="bateau-mouche" data-reveal>
             <div class="container">
                 <h1>Notre Collection de Bateaux</h1>
-                <p>Découvrez notre sélection exceptionnelle</p>
+                <p>Découvrez notre sélection exceptionnelle sur la Seine</p>
             </div>
         </section>
 
-        <section class="content">
+        <section class="content section-fade" data-reveal>
             <div class="container">
-                <div class="boats-grid">
-                    <a href="bateau-ivre.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="Bateau ivress/IVREX.jpg" alt="Bateau Ivre" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>Bateau Ivre</h3>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="chivas.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="Chivas/chivasx.avif" alt="Chivas" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>Chivas</h3>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="la-parisienne.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="La parisienne/LAPARISX.jpg" alt="La Parisienne" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>La Parisienne</h3>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="montebello.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="Montebello/montebelloX.jpg" alt="Montebello" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>Montebello</h3>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="rocca.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="Rocca/roccaX.jpg" alt="Rocca" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>Rocca</h3>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="singnac.html" class="boat-card">
-                        <div class="boat-card-wrapper">
-                            <img src="Singnac/singancx.jpg" alt="Singnac" class="boat-image">
-                            <div class="boat-overlay">
-                                <h3>Singnac</h3>
-                            </div>
-                        </div>
-                    </a>
+                <div class="boats-filters" aria-label="Filtres de recherche">
+                    <div class="filter-control">
+                        <label for="filter-type">Type</label>
+                        <select id="filter-type">
+                            <option value="all">Tous</option>
+                            <option value="bateau-mouche">Bateau-mouche</option>
+                            <option value="prive">Prive</option>
+                            <option value="evenements">Evenements</option>
+                        </select>
+                    </div>
+                    <div class="filter-control">
+                        <label for="filter-capacity">Capacite</label>
+                        <select id="filter-capacity">
+                            <option value="all">Toutes</option>
+                            <option value="10">Jusqu'a 10</option>
+                            <option value="14">Jusqu'a 14</option>
+                            <option value="15">15 et +</option>
+                        </select>
+                    </div>
+                    <div class="filter-control">
+                        <label for="filter-budget">Budget</label>
+                        <select id="filter-budget">
+                            <option value="all">Tous</option>
+                            <option value="1500">Moins de 1500</option>
+                            <option value="2500">Moins de 2500</option>
+                            <option value="2501">Premium</option>
+                        </select>
+                    </div>
                 </div>
+                <div id="prive" class="section-anchor"></div>
+                <div id="boats" class="boats-grid boats-list"></div>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Élies Project. Tous droits réservés.</p>
+            <p>&copy; 2024 ECP (Elysée cruise paris). Tous droits réservés.</p>
         </div>
     </footer>
+
+    <script>
+        /**
+         * CATALOGUE DES BATEAUX
+         * Pour ajouter/modifier un bateau, modifiez uniquement ce tableau
+         */
+        const boats = [
+            {
+                name: "Bateau Ivre",
+                series: "Collection Prestige",
+                type: "prive",
+                capacity: 12,
+                duration: "3h",
+                priceFrom: 2200,
+                options: "Chef prive, champagne, musique live",
+                badge: "VIP",
+                image: "Bateau ivress/IVREX.jpg",
+                link: "bateau-ivre.html"
+            },
+            {
+                name: "Chivas",
+                series: "Sport Luxury",
+                type: "prive",
+                capacity: 14,
+                duration: "2h",
+                priceFrom: 2500,
+                options: "Sunset, photographe, bar prive",
+                badge: "Best-seller",
+                image: "Chivas/chivasx.avif",
+                link: "chivas.html"
+            },
+            {
+                name: "La Parisienne",
+                series: "Classic",
+                type: "bateau-mouche",
+                capacity: 120,
+                duration: "1h30",
+                priceFrom: 990,
+                options: "Guide, musique, cockpit panoramique",
+                badge: "Nouveau",
+                image: "La parisienne/LAPARISX.jpg",
+                link: "la-parisienne.html"
+            },
+            {
+                name: "Montebello",
+                series: "Exclusive",
+                type: "evenements",
+                capacity: 80,
+                duration: "4h",
+                priceFrom: 3200,
+                options: "DJ, catering, scenographie",
+                badge: "VIP",
+                image: "Montebello/montebelloX.jpg",
+                link: "montebello.html"
+            },
+            {
+                name: "Rocca",
+                series: "Sport",
+                type: "prive",
+                capacity: 10,
+                duration: "2h",
+                priceFrom: 1800,
+                options: "Skipper, apéritif, serviettes",
+                badge: "Best-seller",
+                image: "Rocca/roccaX.jpg",
+                link: "rocca.html"
+            },
+            {
+                name: "Singnac",
+                series: "Premium",
+                type: "prive",
+                capacity: 13,
+                duration: "3h",
+                priceFrom: 2400,
+                options: "Suite, jacuzzi, conciergerie",
+                badge: "VIP",
+                image: "Singnac/singancx.jpg",
+                link: "singnac.html"
+            }
+        ];
+
+        /**
+         * GÉNÉRATION DYNAMIQUE DES CARTES BATEAUX
+         * Ne pas modifier cette fonction
+         */
+        function formatPrice(price) {
+            return `${price.toLocaleString('fr-FR')} €`;
+        }
+
+        function buildBoatCard(boat) {
+            const boatCard = document.createElement('a');
+            boatCard.href = boat.link;
+            boatCard.className = 'boat-card premium-card';
+            boatCard.setAttribute('data-reveal', '');
+
+            boatCard.innerHTML = `
+                <div class="boat-card-wrapper premium-card-inner">
+                    <div class="boat-media">
+                        <img src="${boat.image}" alt="${boat.name}" class="boat-image">
+                        <span class="boat-badge">${boat.badge}</span>
+                    </div>
+                    <div class="boat-body">
+                        <div class="boat-header">
+                            <div>
+                                <p class="boat-series">${boat.series}</p>
+                                <h3>${boat.name}</h3>
+                            </div>
+                            <span class="boat-type">${boat.type.replace('-', ' ')}</span>
+                        </div>
+                        <div class="boat-specs">
+                            <span>Capacite : ${boat.capacity} pers.</span>
+                            <span>Duree : ${boat.duration}</span>
+                            <span>Prix des ${formatPrice(boat.priceFrom)}</span>
+                        </div>
+                        <p class="boat-options">Options : ${boat.options}</p>
+                        <div class="boat-actions">
+                            <span class="boat-cta">Reserver</span>
+                            <span class="boat-link">Voir le bateau →</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return boatCard;
+        }
+
+        function matchesFilters(boat, type, capacity, budget) {
+            if (type !== 'all' && boat.type !== type) {
+                return false;
+            }
+
+            if (capacity !== 'all') {
+                const cap = Number(capacity);
+                if (cap === 15 && boat.capacity < 15) {
+                    return false;
+                }
+                if (cap !== 15 && boat.capacity > cap) {
+                    return false;
+                }
+            }
+
+            if (budget !== 'all') {
+                const limit = Number(budget);
+                if (limit === 2501 && boat.priceFrom <= 2500) {
+                    return false;
+                }
+                if (limit !== 2501 && boat.priceFrom > limit) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function renderBoats() {
+            const boatsContainer = document.getElementById('boats');
+            const filterType = document.getElementById('filter-type');
+            const filterCapacity = document.getElementById('filter-capacity');
+            const filterBudget = document.getElementById('filter-budget');
+
+            const update = () => {
+                boatsContainer.innerHTML = '';
+                const filtered = boats.filter((boat) =>
+                    matchesFilters(boat, filterType.value, filterCapacity.value, filterBudget.value)
+                );
+
+                filtered.forEach((boat) => {
+                    boatsContainer.appendChild(buildBoatCard(boat));
+                });
+            };
+
+            [filterType, filterCapacity, filterBudget].forEach((control) => {
+                control.addEventListener('change', update);
+            });
+
+            update();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderBoats);
+    </script>
+    <script src="site.js"></script>
 </body>
 </html>

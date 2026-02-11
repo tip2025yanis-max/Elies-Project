@@ -1,0 +1,486 @@
+/**
+ * Script Umami Analytics
+ * Ce script gère le suivi analytique du site web
+ * Umami est une solution d'analyse web respectueuse de la vie privée
+ */
+
+!(function () {
+  "use strict";
+  
+  (function (window) {
+    // ========================================
+    // EXTRACTION DES PROPRIÉTÉS DE L'OBJET WINDOW
+    // ========================================
+    
+    // Récupération des dimensions de l'écran de l'utilisateur
+    // Récupération des informations du navigateur (langue, paramètres de confidentialité)
+    // Récupération des objets essentiels (location, document, history, etc.)
+    const {
+      screen: { width: screenWidth, height: screenHeight },
+      navigator: { language, doNotTrack: navDoNotTrack, msDoNotTrack },
+      location,
+      document,
+      history,
+      top,
+      doNotTrack: windowDoNotTrack
+    } = window;
+    
+    // Récupération du script actuel et du référent (page précédente)
+    const { currentScript, referrer } = document;
+    
+    // Si le script n'est pas trouvé dans le DOM, on arrête l'exécution
+    if (!currentScript) return;
+    
+    // Extraction des informations de localisation (nom d'hôte, URL, origine)
+    const { hostname, href, origin } = location;
+    
+    // Accès au localStorage (sauf si l'URL commence par "data:")
+    const localStorage = href.startsWith("data:") ? void 0 : window.localStorage;
+    
+    // ========================================
+    // CONSTANTES DE CONFIGURATION
+    // ========================================
+    
+    const DATA_PREFIX = "data-"; // Préfixe pour les attributs HTML personnalisés
+    const TRUE_VALUE = "true"; // Valeur booléenne pour les comparaisons
+    const getAttribute = currentScript.getAttribute.bind(currentScript); // Fonction pour récupérer les attributs du script
+    
+    // ========================================
+    // LECTURE DES ATTRIBUTS DU SCRIPT
+    // ========================================
+    
+    // ID du site web (obligatoire pour identifier le site dans Umami)
+    const websiteId = getAttribute(`${DATA_PREFIX}website-id`);
+    
+    // URL du serveur Umami (optionnel, utilise le serveur par défaut si non spécifié)
+    const hostUrl = getAttribute(`${DATA_PREFIX}host-url`);
+    
+    // Nom de la fonction callback à exécuter avant l'envoi des données
+    const beforeSendCallback = getAttribute(`${DATA_PREFIX}before-send`);
+    
+    // Tag personnalisé pour identifier certaines pages ou sections
+    const tag = getAttribute(`${DATA_PREFIX}tag`) || void 0;
+    
+    // Active/désactive le suivi automatique des pages (true par défaut)
+    const autoTrack = "false" !== getAttribute(`${DATA_PREFIX}auto-track`);
+    
+    // Respecte le paramètre "Do Not Track" du navigateur si activé
+    const respectDoNotTrack = getAttribute(`${DATA_PREFIX}do-not-track`) === TRUE_VALUE;
+    
+    // Exclut les paramètres de recherche (query string) de l'URL
+    const excludeSearch = getAttribute(`${DATA_PREFIX}exclude-search`) === TRUE_VALUE;
+    
+    // Exclut le hash (#) de l'URL
+    const excludeHash = getAttribute(`${DATA_PREFIX}exclude-hash`) === TRUE_VALUE;
+    
+    // Liste des domaines autorisés (vide = tous les domaines)
+    const domainsString = getAttribute(`${DATA_PREFIX}domains`) || "";
+    
+    // Mode d'envoi des credentials avec les requêtes fetch (omit, include, same-origin)
+    const fetchCredentials = getAttribute(`${DATA_PREFIX}fetch-credentials`) || "omit";
+    
+    // Transformation de la liste des domaines en tableau
+    const allowedDomains = domainsString.split(",").map(domain => domain.trim());
+    
+    // ========================================
+    // CONFIGURATION DE L'API
+    // ========================================
+    
+    // Point de terminaison de l'API pour envoyer les données analytiques
+    const apiEndpoint = `${(hostUrl || "https://api-gateway.umami.dev").replace(/\/$/, "")}/api/send`;
+    
+    // Résolution d'écran de l'utilisateur (format: "1920x1080")
+    const screenResolution = `${screenWidth}x${screenHeight}`;
+    
+    // Expression régulière pour extraire les événements personnalisés des attributs HTML
+    const eventPattern = /data-umami-event-([\w-_]+)/;
+    
+    // Nom de l'attribut pour les événements Umami
+    const eventAttribute = `${DATA_PREFIX}umami-event`;
+    
+    // Délai en millisecondes avant d'envoyer un événement de navigation
+    const trackDelay = 300;
+    
+    // ========================================
+    // FONCTION UTILITAIRE : NETTOYAGE D'URL
+    // ========================================
+    
+    /**
+     * Nettoie une URL en supprimant optionnellement les paramètres de recherche et le hash
+     * @param {string} url - L'URL à nettoyer
+     * @returns {string} L'URL nettoyée
+     */
+    const cleanUrl = (url) => {
+      if (!url) return url;
+      
+      try {
+        // Création d'un objet URL pour manipuler facilement ses composants
+        const urlObject = new URL(url, location.href);
+        
+        // Suppression des paramètres de recherche si demandé (ex: ?param=value)
+        if (excludeSearch) urlObject.search = "";
+        
+        // Suppression du hash si demandé (ex: #section)
+        if (excludeHash) urlObject.hash = "";
+        
+        return urlObject.toString();
+      } catch {
+        // En cas d'erreur de parsing, on retourne l'URL originale
+        return url;
+      }
+    };
+    
+    // ========================================
+    // FONCTION : CRÉATION DU PAYLOAD DE SUIVI
+    // ========================================
+    
+    /**
+     * Génère l'objet de données à envoyer au serveur Umami
+     * @returns {Object} Objet contenant toutes les informations de suivi
+     */
+    const getPayload = () => ({
+      website: websiteId,          // ID du site web
+      screen: screenResolution,    // Résolution d'écran
+      language: language,          // Langue du navigateur
+      title: document.title,       // Titre de la page
+      hostname: hostname,          // Nom de domaine
+      url: currentUrl,            // URL actuelle (nettoyée)
+      referrer: currentReferrer,  // URL de la page précédente
+      tag: tag,                   // Tag personnalisé
+      id: userId || void 0        // ID de l'utilisateur (si identifié)
+    });
+    
+    // ========================================
+    // FONCTION : GESTION DES CHANGEMENTS D'HISTORIQUE
+    // ========================================
+    
+    /**
+     * Gère les changements de navigation via pushState/replaceState
+     * Met à jour les URLs et déclenche le suivi après un délai
+     * @param {*} state - État de l'historique
+     * @param {string} title - Titre de la page
+     * @param {string} url - Nouvelle URL
+     */
+    const handleHistoryChange = (state, title, url) => {
+      if (url) {
+        // Mise à jour du référent avec l'URL actuelle
+        currentReferrer = currentUrl;
+        
+        // Mise à jour de l'URL actuelle avec la nouvelle URL nettoyée
+        currentUrl = cleanUrl(new URL(url, location.href).toString());
+        
+        // Si l'URL a réellement changé, on envoie un événement de suivi après un délai
+        if (currentUrl !== currentReferrer) {
+          setTimeout(track, trackDelay);
+        }
+      }
+    };
+    
+    // ========================================
+    // FONCTION : VÉRIFICATION DE LA DÉSACTIVATION DU SUIVI
+    // ========================================
+    
+    /**
+     * Vérifie si le suivi doit être désactivé en fonction de plusieurs critères
+     * @returns {boolean} true si le suivi est désactivé, false sinon
+     */
+    const isTrackingDisabled = () => {
+      return (
+        trackingDisabled ||                                      // Désactivation explicite par le serveur
+        !websiteId ||                                           // Pas d'ID de site web configuré
+        localStorage?.getItem("umami.disabled") ||              // Utilisateur a désactivé le suivi
+        (domainsString && !allowedDomains.includes(hostname)) || // Domaine non autorisé
+        (respectDoNotTrack && checkDoNotTrack())                // Do Not Track activé
+      );
+    };
+    
+    // ========================================
+    // FONCTION : VÉRIFICATION DU "DO NOT TRACK"
+    // ========================================
+    
+    /**
+     * Vérifie si l'utilisateur a activé la fonction "Do Not Track" dans son navigateur
+     * @returns {boolean} true si Do Not Track est activé
+     */
+    const checkDoNotTrack = () => {
+      // Vérifie différentes sources possibles du paramètre DNT
+      const dnt = windowDoNotTrack || navDoNotTrack || msDoNotTrack;
+      // DNT peut être 1, "1" ou "yes"
+      return dnt === 1 || dnt === "1" || dnt === "yes";
+    };
+    
+    // ========================================
+    // FONCTION : ENVOI DES DONNÉES À L'API
+    // ========================================
+    
+    /**
+     * Envoie les données de suivi au serveur Umami
+     * @param {Object} payload - Les données à envoyer
+     * @param {string} eventType - Type d'événement ("event" ou "identify")
+     */
+    const send = async (payload, eventType = "event") => {
+      // Ne rien faire si le suivi est désactivé
+      if (isTrackingDisabled()) return;
+      
+      // Appel du callback personnalisé avant envoi (si configuré)
+      const callback = window[beforeSendCallback];
+      if (typeof callback === "function") {
+        payload = await Promise.resolve(callback(eventType, payload));
+      }
+      
+      // Si le payload existe toujours après le callback, on l'envoie
+      if (payload) {
+        try {
+          // Envoi de la requête POST vers l'API Umami
+          const response = await fetch(apiEndpoint, {
+            keepalive: true,  // Permet l'envoi même si la page se ferme
+            method: "POST",
+            body: JSON.stringify({ type: eventType, payload: payload }),
+            headers: {
+              "Content-Type": "application/json",
+              // Ajout du header de cache si disponible
+              ...(void 0 !== cache && { "x-umami-cache": cache })
+            },
+            credentials: fetchCredentials
+          });
+          
+          // Traitement de la réponse
+          const data = await response.json();
+          if (data) {
+            // Mise à jour de l'état de désactivation si le serveur le demande
+            trackingDisabled = !!data.disabled;
+            // Mise à jour du cache pour les futures requêtes
+            cache = data.cache;
+          }
+        } catch (error) {
+          // Les erreurs sont ignorées silencieusement pour ne pas perturber l'expérience utilisateur
+        }
+      }
+    };
+    
+    // ========================================
+    // FONCTION : INITIALISATION DU SUIVI
+    // ========================================
+    
+    /**
+     * Initialise le système de suivi :
+     * - Lance le premier événement de page vue
+     * - Intercepte les méthodes de l'API History
+     * - Active le suivi des clics sur les éléments
+     */
+    const init = () => {
+      // Évite une double initialisation
+      if (initialized) return;
+      
+      initialized = true;
+      
+      // Envoi du premier événement de page vue
+      track();
+      
+      // ========================================
+      // INTERCEPTION DE L'API HISTORY
+      // ========================================
+      
+      /**
+       * Patch les méthodes pushState et replaceState pour détecter
+       * les changements de navigation en mode SPA (Single Page Application)
+       */
+      (function () {
+        /**
+         * Créer une version patchée d'une méthode de l'historique
+         * @param {Object} obj - L'objet history
+         * @param {string} method - Le nom de la méthode à patcher
+         * @param {Function} callback - Fonction à exécuter avant la méthode originale
+         * @returns {Function} La méthode patchée
+         */
+        const patchHistoryMethod = (obj, method, callback) => {
+          const original = obj[method];
+          return (...args) => {
+            // Exécute d'abord notre callback
+            callback.apply(null, args);
+            // Puis exécute la méthode originale
+            return original.apply(obj, args);
+          };
+        };
+        
+        // Application des patches aux méthodes de navigation
+        history.pushState = patchHistoryMethod(history, "pushState", handleHistoryChange);
+        history.replaceState = patchHistoryMethod(history, "replaceState", handleHistoryChange);
+      })();
+      
+      // ========================================
+      // SUIVI DES ÉVÉNEMENTS DE CLIC
+      // ========================================
+      
+      /**
+       * Active le suivi des clics sur les éléments avec attributs data-umami-event
+       */
+      (function () {
+        /**
+         * Gère le clic sur un élément avec attribut data-umami-event
+         * @param {HTMLElement} element - L'élément cliqué
+         * @returns {Promise} Promesse de l'envoi de l'événement
+         */
+        const handleElementClick = async (element) => {
+          const eventName = element.getAttribute(eventAttribute);
+          
+          if (eventName) {
+            // Récupération de toutes les données d'événement personnalisées
+            const eventData = {};
+            element.getAttributeNames().forEach(attrName => {
+              const match = attrName.match(eventPattern);
+              if (match) {
+                // Extraction du nom de la propriété et de sa valeur
+                eventData[match[1]] = element.getAttribute(attrName);
+              }
+            });
+            
+            // Envoi de l'événement avec son nom et ses données
+            return track(eventName, eventData);
+          }
+        };
+        
+        /**
+         * Écoute tous les clics sur le document pour détecter les événements personnalisés
+         */
+        document.addEventListener("click", async (event) => {
+          const target = event.target;
+          const clickedElement = target.closest("a,button");
+          
+          // Si aucun lien ou bouton n'est cliqué, vérifier l'élément lui-même
+          if (!clickedElement) return handleElementClick(target);
+          
+          const { href: linkHref, target: linkTarget } = clickedElement;
+          
+          // Si l'élément a un attribut d'événement Umami
+          if (clickedElement.getAttribute(eventAttribute)) {
+            
+            // Cas 1 : C'est un bouton - on envoie l'événement directement
+            if (clickedElement.tagName === "BUTTON") {
+              return handleElementClick(clickedElement);
+            }
+            
+            // Cas 2 : C'est un lien avec une URL
+            if (clickedElement.tagName === "A" && linkHref) {
+              // Détecte si c'est un lien externe ou ouvrant un nouvel onglet
+              const isExternalLink =
+                linkTarget === "_blank" ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.metaKey ||
+                (event.button && event.button === 1);
+              
+              // Empêche la navigation par défaut si c'est un lien interne
+              if (!isExternalLink) event.preventDefault();
+              
+              // Envoie l'événement puis navigue vers le lien
+              return handleElementClick(clickedElement).then(() => {
+                if (!isExternalLink) {
+                  // Navigation différée pour permettre l'envoi de l'événement
+                  (linkTarget === "_top" ? top.location : location).href = linkHref;
+                }
+              });
+            }
+          }
+        }, true); // true = capture phase pour intercepter avant les autres handlers
+      })();
+    };
+    
+    // ========================================
+    // FONCTION PUBLIQUE : TRACK (SUIVRE UN ÉVÉNEMENT)
+    // ========================================
+    
+    /**
+     * Fonction principale de suivi d'événements
+     * Peut être appelée de différentes manières :
+     * - track() : envoi d'une page vue simple
+     * - track("event_name", {data}) : envoi d'un événement nommé avec données
+     * - track({custom_payload}) : envoi d'un payload personnalisé
+     * - track(function) : envoi du résultat d'une fonction
+     * 
+     * @param {string|Object|Function} eventName - Nom de l'événement ou objet de configuration
+     * @param {Object} eventData - Données associées à l'événement (optionnel)
+     * @returns {Promise} Promesse de l'envoi des données
+     */
+    const track = (eventName, eventData) => {
+      return send(
+        typeof eventName === "string"
+          ? { ...getPayload(), name: eventName, data: eventData }  // Cas 1: événement nommé
+          : typeof eventName === "object"
+          ? { ...eventName }                                       // Cas 2: objet personnalisé
+          : typeof eventName === "function"
+          ? eventName(getPayload())                               // Cas 3: fonction
+          : getPayload()                                          // Cas 4: page vue par défaut
+      );
+    };
+    
+    // ========================================
+    // FONCTION PUBLIQUE : IDENTIFY (IDENTIFIER UN UTILISATEUR)
+    // ========================================
+    
+    /**
+     * Identifie un utilisateur pour le suivi personnalisé
+     * Permet d'associer les événements futurs à un utilisateur spécifique
+     * 
+     * @param {string|Object} user - ID de l'utilisateur ou objet avec données utilisateur
+     * @param {Object} userData - Données supplémentaires de l'utilisateur (optionnel)
+     * @returns {Promise} Promesse de l'envoi de l'identification
+     */
+    const identify = (user, userData) => {
+      // Si c'est une chaîne, on la stocke comme ID utilisateur
+      if (typeof user === "string") userId = user;
+      
+      // Réinitialisation du cache pour forcer une nouvelle requête
+      cache = "";
+      
+      // Envoi de l'événement d'identification
+      return send(
+        { ...getPayload(), data: typeof user === "object" ? user : userData },
+        "identify"
+      );
+    };
+    
+    // ========================================
+    // EXPOSITION DE L'API PUBLIQUE
+    // ========================================
+    
+    // Création de l'objet umami global s'il n'existe pas déjà
+    // Cet objet permet aux développeurs d'interagir avec le système de suivi
+    if (!window.umami) {
+      window.umami = { 
+        track,    // Fonction pour suivre des événements personnalisés
+        identify  // Fonction pour identifier des utilisateurs
+      };
+    }
+    
+    // ========================================
+    // VARIABLES D'ÉTAT
+    // ========================================
+    
+    let cache;                                          // Cache pour optimiser les requêtes
+    let userId;                                         // ID de l'utilisateur identifié
+    let currentUrl = cleanUrl(href);                    // URL actuelle nettoyée
+    let currentReferrer = cleanUrl(                     // Référent nettoyé (page précédente)
+      referrer.startsWith(origin) ? "" : referrer       // Si même origine, on vide le référent
+    );
+    let initialized = false;                            // Indique si le système est initialisé
+    let trackingDisabled = false;                       // Indique si le suivi a été désactivé
+    
+    // ========================================
+    // DÉMARRAGE AUTOMATIQUE
+    // ========================================
+    
+    // Si le suivi automatique est activé ET que le suivi n'est pas désactivé
+    if (autoTrack && !isTrackingDisabled()) {
+      // Si le document est déjà complètement chargé, on initialise immédiatement
+      if (document.readyState === "complete") {
+        init();
+      } else {
+        // Sinon, on attend que le document soit prêt
+        document.addEventListener("readystatechange", init, true);
+      }
+    }
+    
+  })(window); // Fin de la fonction auto-exécutée avec window comme paramètre
+  
+})(); // Fin de l'IIFE (Immediately Invoked Function Expression)
