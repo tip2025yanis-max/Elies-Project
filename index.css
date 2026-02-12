@@ -68,6 +68,13 @@ footer {
     z-index: 1;
 }
 
+section {
+    background-image: url("fondsection1.jpeg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
 @keyframes rise-in {
     from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: translateY(0); }
@@ -152,35 +159,55 @@ h3 {
     text-align: center;
 }
 
-.loader-spinner {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 2rem;
-    border: 3px solid rgba(184, 155, 46, 0.2);
-    border-top: 3px solid var(--color-gold-light);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.loader-logo-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    margin: 0 auto 1.25rem;
 }
 
 .loader-logo {
-    width: 60px;
-    height: 60px;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
-    animation: counter-spin 1s linear infinite;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.loader-dots {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
 }
 
-@keyframes counter-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(-360deg); }
+.loader-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-cream);
+    opacity: 0.7;
+    animation: dot-glow 1.2s ease-in-out infinite;
+}
+
+.loader-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loader-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dot-glow {
+    0%, 100% {
+        background: var(--color-cream);
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        background: var(--color-gold-light);
+        opacity: 1;
+        transform: scale(1.15);
+    }
 }
 
 .loader-text {
@@ -219,6 +246,32 @@ header.site-header {
     z-index: 100;
     border-bottom: none;
     transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+body.home header.site-header {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+}
+
+body.home header.site-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(180deg, rgba(2, 39, 77, 0.85) 0%, rgba(2, 39, 77, 0) 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.home header.site-header.scrolled {
+    background: linear-gradient(180deg, rgba(2, 39, 77, 0.85), rgba(1, 28, 54, 0));
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(1, 28, 54, 0.35);
 }
 
 header.site-header.scrolled {
@@ -302,6 +355,7 @@ header.site-header.scrolled {
 .nav-link:hover,
 .nav-link:focus {
     color: var(--color-gold-light);
+    text-shadow: 0 0 10px rgba(184, 155, 46, 0.75), 0 0 22px rgba(184, 155, 46, 0.45);
 }
 
 .nav-link:hover::after,
@@ -334,7 +388,9 @@ header.site-header.scrolled {
 .hero {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: calc(100vh + 96px);
+    margin-top: -96px;
+    background: none !important;
     overflow: hidden;
     text-align: center;
     color: var(--color-cream);
@@ -349,7 +405,7 @@ header.site-header.scrolled {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 0;
     object-fit: cover;
     will-change: transform;
 }
@@ -363,6 +419,7 @@ header.site-header.scrolled {
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.27);
     text-shadow: 0 12px 30px rgba(1, 28, 54, 0.45);
     transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.25s ease;
 }
@@ -370,7 +427,7 @@ header.site-header.scrolled {
 .hero-link-simple:hover,
 .hero-link-simple:focus {
     color: var(--color-gold-light);
-    text-shadow: 0 0 28px rgba(184, 155, 46, 1), 0 0 55px rgba(184, 155, 46, 0.7);
+    text-shadow: 0 0 30px rgba(184, 155, 46, 1), 0 0 65px rgba(184, 155, 46, 0.8), 0 0 95px rgba(184, 155, 46, 0.45);
     transform: translateY(-2px);
 }
 
@@ -446,6 +503,39 @@ header.site-header.scrolled {
     padding: 4rem 0;
     margin-top: 2rem;
     border-radius: 20px 20px 0 0;
+}
+
+.universe-section {
+    padding: 4.5rem 0;
+    background: transparent;
+}
+
+.universe-section .about-title {
+    color: var(--color-cream);
+}
+
+.universe-section .about-text {
+    color: rgba(250, 248, 239, 0.78);
+}
+
+.universe-section .feature-card {
+    background: rgba(250, 248, 239, 0.08);
+    border-color: rgba(184, 155, 46, 0.25);
+    color: var(--color-cream);
+}
+
+.universe-section .feature-card h3 {
+    color: var(--color-gold-light);
+}
+
+.universe-services .feature-card {
+    background: rgba(250, 248, 239, 0.08);
+    border-color: rgba(184, 155, 46, 0.25);
+    color: var(--color-cream);
+}
+
+.universe-services .feature-card h3 {
+    color: var(--color-gold-light);
 }
 
 .features {
@@ -541,7 +631,7 @@ footer {
     }
     
     .hero {
-        height: 100svh;
+        height: calc(100svh + 96px);
     }
 
     .hero-link-simple {
@@ -641,6 +731,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
+    overflow: visible;
     margin-bottom: 3rem;
 }
 
@@ -648,6 +739,7 @@ footer {
     text-decoration: none;
     color: inherit;
     display: block;
+    transform: translateY(0);
     transition: transform 0.3s ease;
     animation: rise-in 0.8s ease both;
 }
@@ -661,7 +753,7 @@ footer {
 }
 
 .boat-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
 }
 
 .boat-card-wrapper {
@@ -672,6 +764,12 @@ footer {
     border: 1px solid rgba(125, 100, 0, 0.35);
     background: rgba(3, 47, 90, 0.85);
     box-shadow: 0 18px 45px rgba(1, 28, 54, 0.35);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.boat-card:hover .boat-card-wrapper {
+    border-color: rgba(184, 155, 46, 0.65);
+    box-shadow: 0 22px 50px rgba(1, 28, 54, 0.45);
 }
 
 .boat-image {
@@ -695,10 +793,6 @@ footer {
     padding: 2rem;
     transform: translateY(0);
     transition: transform 0.3s ease;
-}
-
-.boat-card:hover .boat-overlay {
-    transform: translateY(-10px);
 }
 
 .boat-info h3 {

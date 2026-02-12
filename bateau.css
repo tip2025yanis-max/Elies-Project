@@ -68,6 +68,13 @@ footer {
     z-index: 1;
 }
 
+section {
+    background-image: url("fondsection1.jpeg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
 @keyframes rise-in {
     from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: translateY(0); }
@@ -186,6 +193,7 @@ header.site-header.scrolled {
 .nav-link:hover,
 .nav-link:focus {
     color: var(--color-gold-light);
+    text-shadow: 0 0 10px rgba(184, 155, 46, 0.75), 0 0 22px rgba(184, 155, 46, 0.45);
 }
 
 .nav-link:hover::after,
@@ -277,6 +285,12 @@ header.site-header.scrolled {
     font-size: 0.75rem;
     color: var(--color-gold-light);
     margin-bottom: 1rem;
+    transition: text-shadow 0.25s ease, color 0.25s ease;
+}
+
+.boat-kicker:hover {
+    color: var(--color-gold-light);
+    text-shadow: 0 0 10px rgba(184, 155, 46, 0.7), 0 0 20px rgba(184, 155, 46, 0.45);
 }
 
 .boat-hero-content h1 {
@@ -285,6 +299,12 @@ header.site-header.scrolled {
     letter-spacing: 0.12em;
     margin-bottom: 1.2rem;
     text-shadow: 3px 3px 15px rgba(1, 28, 54, 0.8);
+    transition: text-shadow 0.25s ease, color 0.25s ease;
+}
+
+.boat-hero-content h1:hover {
+    color: var(--color-gold-light);
+    text-shadow: 0 0 14px rgba(184, 155, 46, 0.85), 0 0 30px rgba(184, 155, 46, 0.55), 0 0 55px rgba(184, 155, 46, 0.35);
 }
 
 .boat-meta {
@@ -312,7 +332,9 @@ header.site-header.scrolled {
 }
 
 .boat-content {
-    background: linear-gradient(180deg, rgba(2, 39, 77, 0.95), rgba(1, 28, 54, 0.95));
+    background: linear-gradient(180deg, rgba(2, 39, 77, 0.95), rgba(1, 28, 54, 0.95)), url("fondsection1.jpeg");
+    background-size: cover;
+    background-position: center;
     padding: 5rem 0;
     position: relative;
 }
@@ -329,7 +351,6 @@ header.site-header.scrolled {
     left: 0;
     right: 0;
     height: 90px;
-    background-image: url("INDEX/vaguesur.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     pointer-events: none;
@@ -342,7 +363,6 @@ header.site-header.scrolled {
 
 .wave-bottom::after {
     bottom: -1px;
-    background-image: url("INDEX/vaguesous.png");
 }
 
 .boat-section {

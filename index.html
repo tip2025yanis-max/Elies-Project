@@ -9,12 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
-<body>
+<body class="home">
     <!-- Animation de chargement -->
     <div id="loader" class="loader-overlay">
         <div class="loader-content">
-            <div class="loader-spinner">
+            <div class="loader-logo-wrap">
                 <img src="INDEX/mocan1.png" alt="Logo Élies" class="loader-logo">
+            </div>
+            <div class="loader-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
             <div class="loader-text">ECP (Elysée cruise paris)</div>
         </div>
@@ -30,8 +35,7 @@
                     <div class="nav-links">
                         <a href="index.html" class="nav-link">Accueil</a>
                         <a href="bateaux.html" class="nav-link">Nos bateaux</a>
-                        <a href="bateaux.html#bateau-mouche" class="nav-link">Bateau-mouche</a>
-                        <a href="bateaux.html#prive" class="nav-link">Prive</a>
+                        <a href="notre-univers.html" class="nav-link">Notre univers</a>
                         <a href="contact.html" class="nav-link">Contact</a>
                     </div>
                     <a href="contact.html" class="nav-cta">Reserver</a>
@@ -72,6 +76,19 @@
                         </ul>
                     </div>
                     <a href="contact.html" class="contact-btn">Nous contacter</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="universe-section section-fade" data-reveal>
+            <div class="container">
+                <h2 class="about-title">Notre univers</h2>
+                <p class="about-text">
+                    Une signature elegante sur la Seine, entre art de vivre, service discret et
+                    experiences sur mesure pour vos moments d'exception.
+                </p>
+                <div class="contact-content">
+                    <a href="notre-univers.html" class="contact-btn">Decouvrir notre univers</a>
                 </div>
             </div>
         </section>
